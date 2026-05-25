@@ -268,6 +268,9 @@ label:first-child { margin-top: 0; }
       <select id="f-main-pick" onchange="appendAction('f-main','f-main-pick')">
         <option value="">— 快選 —</option>
       </select>
+      <select id="f-main-target" onchange="appendTarget('f-main','f-main-target')">
+        <option value="">— 對象 —</option>
+      </select>
     </div>
     <textarea id="f-main" rows="2" placeholder="攻擊目標 / 施展法術 / 道具使用 / 其他…" style="margin-top:6px"></textarea>
 
@@ -277,12 +280,18 @@ label:first-child { margin-top: 0; }
         <select id="f-bonus-pick" onchange="appendAction('f-bonus','f-bonus-pick')">
           <option value="">— 快選 —</option>
         </select>
+        <select id="f-bonus-target" onchange="appendTarget('f-bonus','f-bonus-target')" style="margin-top:4px">
+          <option value="">— 對象 —</option>
+        </select>
         <textarea id="f-bonus" rows="2" placeholder="附贈動作…" style="margin-top:6px"></textarea>
       </div>
       <div class="col">
         <label>🛡️ 反應</label>
         <select id="f-reaction-pick" onchange="appendAction('f-reaction','f-reaction-pick')">
           <option value="">— 快選 —</option>
+        </select>
+        <select id="f-reaction-target" onchange="appendTarget('f-reaction','f-reaction-target')" style="margin-top:4px">
+          <option value="">— 對象 —</option>
         </select>
         <textarea id="f-reaction" rows="2" placeholder="反應動作…" style="margin-top:6px"></textarea>
       </div>
@@ -684,6 +693,49 @@ function appendAction(textareaId, selectId) {
   sel.value = "";
 }
 
+function appendTarget(fieldId, selectId) {
+  const sel = document.getElementById(selectId);
+  const ta  = document.getElementById(fieldId);
+  if (!sel || !ta || !sel.value) return;
+  const cur = ta.value.trim();
+  ta.value = cur ? cur + " → " + sel.value : "→ " + sel.value;
+  sel.value = "";
+}
+
+function populateTargetDropdowns() {
+  const battle = state.activeBattle;
+  const char = battle.characters[state.activeCharIdx];
+  const targets = battle.characters.filter(c => c.id !== char.id);
+  const players = targets.filter(c => c.type === "player");
+  const enemies  = targets.filter(c => c.type === "enemy");
+
+  ["f-main-target", "f-bonus-target", "f-reaction-target"].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— 對象 —</option>';
+    if (players.length) {
+      const grp = document.createElement("optgroup");
+      grp.label = "玩家";
+      players.forEach(c => {
+        const o = document.createElement("option");
+        o.value = c.name; o.textContent = c.emoji + " " + c.name;
+        grp.appendChild(o);
+      });
+      sel.appendChild(grp);
+    }
+    if (enemies.length) {
+      const grp = document.createElement("optgroup");
+      grp.label = "敵人";
+      enemies.forEach(c => {
+        const o = document.createElement("option");
+        o.value = c.name; o.textContent = c.emoji + " " + c.name;
+        grp.appendChild(o);
+      });
+      sel.appendChild(grp);
+    }
+  });
+}
+
 function renderEntryForm() {
   const battle = state.activeBattle;
   const char = battle.characters[state.activeCharIdx];
@@ -716,6 +768,9 @@ function renderEntryForm() {
   populateActionDropdown("f-bonus-pick",    acts["附贈動作"]);
   populateActionDropdown("f-reaction-pick", acts["反應"]);
   populateActionDropdown("f-skills-pick",   acts["技能/專長"]);
+
+  // Populate target dropdowns from battle characters
+  populateTargetDropdowns();
 
   document.getElementById("f-hp-start").value   = entry.hpAtStart ?? char.currentHP;
   document.getElementById("f-hp-change").value  = entry.hpChange ?? 0;
