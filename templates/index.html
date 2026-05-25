@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>⚔️ D&D 戰鬥紀錄</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -39,14 +40,14 @@ button {
   cursor: pointer; border: none; border-radius: 6px;
   padding: 11px 18px; font-size: 15px; font-weight: 600; transition: all 0.15s;
 }
-.btn-primary { background: var(--gold); color: #000; }
-.btn-primary:hover { background: #e8b827; }
+.btn-primary  { background: var(--gold); color: #000; }
+.btn-primary:hover  { background: #e8b827; }
 .btn-primary:active { transform: scale(0.97); }
 .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { background: var(--border); }
 .btn-danger { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
 .btn-danger:hover { background: rgba(248,81,73,0.25); }
-.btn-sm { padding: 7px 13px; font-size: 13px; }
+.btn-sm   { padding: 7px 13px; font-size: 13px; }
 .btn-full { width: 100%; }
 .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
 .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
@@ -60,6 +61,11 @@ label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 
 label:first-child { margin-top: 0; }
 .row { display: flex; gap: 10px; }
 .col { flex: 1; min-width: 0; }
+
+/* ── Cinzel ── */
+.nav-title, .section-title, .round-num, .log-round-title, .modal-title {
+  font-family: 'Cinzel', serif;
+}
 
 /* ── Nav ── */
 #nav {
@@ -95,18 +101,34 @@ label:first-child { margin-top: 0; }
 /* ── COMBAT PAGE ── */
 .round-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .round-nav .round-num { flex: 1; text-align: center; font-size: 24px; font-weight: 800; color: var(--gold); }
+
+/* Char tabs */
 .char-tabs { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; scrollbar-width: thin; }
-.char-tab { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 10px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg2); cursor: pointer; text-align: center; min-width: 72px; transition: border-color 0.15s; }
+.char-tab {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 8px 6px; border-radius: 12px; border: 2px solid var(--border);
+  background: var(--bg2); cursor: pointer; text-align: center; min-width: 72px; transition: border-color 0.15s;
+}
 .char-tab.active { border-color: var(--gold); background: rgba(212,160,23,0.1); }
+.char-tab.dead   { border-color: rgba(248,81,73,0.5); background: rgba(248,81,73,0.05); }
 .char-tab .tab-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
 .char-tab.active .tab-avatar { border-color: var(--gold); }
 .char-tab .tab-avatar-emoji { width: 52px; height: 52px; border-radius: 50%; background: var(--bg3); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 24px; }
 .char-tab .tab-name { font-weight: 700; font-size: 12px; color: var(--text); }
-.char-tab .tab-hp { font-size: 11px; }
+.char-tab .tab-hp { font-size: 11px; cursor: pointer; border-radius: 4px; padding: 1px 4px; }
+.char-tab .tab-hp:hover { background: var(--bg3); }
+.tab-initiative { font-size: 10px; color: var(--gold); font-weight: 700; }
+.tab-badges { display: flex; gap: 3px; justify-content: center; min-height: 14px; }
+.tab-badge { font-size: 11px; line-height: 1; }
+.action-dots { display: flex; gap: 3px; justify-content: center; }
+.action-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--border); }
+.action-dot.main.used  { background: var(--gold);   border-color: var(--gold); }
+.action-dot.bonus.used { background: var(--blue);   border-color: var(--blue); }
+.action-dot.react.used { background: var(--purple); border-color: var(--purple); }
+
 /* Action dropdowns */
 .action-row { display: flex; gap: 6px; }
 .action-row select { flex: 1; min-width: 0; }
-.action-row textarea { flex: 1; min-width: 0; }
 .pick-btn { flex-shrink: 0; padding: 10px 11px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; color: var(--text-dim); font-size: 16px; line-height: 1; }
 .pick-btn:hover { color: var(--gold); border-color: var(--gold); }
 
@@ -116,7 +138,6 @@ label:first-child { margin-top: 0; }
 
 /* Entry form */
 .entry-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.entry-header .entry-emoji { font-size: 28px; }
 .entry-header .entry-name { font-size: 20px; font-weight: 700; }
 .entry-header .entry-meta { font-size: 12px; color: var(--text-dim); }
 .status-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
@@ -127,14 +148,50 @@ label:first-child { margin-top: 0; }
 .status-opt { padding: 5px 10px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: var(--bg3); color: var(--text); user-select: none; }
 .status-opt.selected { background: rgba(248,81,73,0.15); color: var(--red); border-color: rgba(248,81,73,0.3); }
 
-/* HP Quick edit */
-.hp-input-row { display: flex; gap: 10px; align-items: flex-end; }
+/* HP calc */
 .hp-calc { font-size: 14px; color: var(--text-dim); padding: 10px 0; }
 .hp-result { font-size: 18px; font-weight: 700; }
 .hp-result.positive { color: var(--green); }
 .hp-result.negative { color: var(--red); }
 
 .save-btn { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 608px; z-index: 50; padding: 15px; font-size: 16px; box-shadow: var(--shadow); }
+
+/* ── Death Saves ── */
+.death-saves-box { background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
+.death-saves-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 10px; font-family: 'Cinzel', serif; }
+.ds-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ds-label { font-size: 12px; color: var(--text-dim); width: 40px; }
+.ds-check { width: 24px; height: 24px; border-radius: 5px; border: 2px solid var(--border); cursor: pointer; transition: all 0.15s; display: inline-block; }
+.ds-check.success.filled { background: var(--green); border-color: var(--green); }
+.ds-check.fail.filled    { background: var(--red);   border-color: var(--red); }
+
+/* ── Overview Panel ── */
+#overview-panel { margin-bottom: 14px; }
+#overview-panel > summary {
+  cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-dim);
+  user-select: none; list-style: none; display: flex; align-items: center; gap: 6px;
+  padding: 9px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+}
+#overview-panel > summary:hover { color: var(--text); }
+#overview-panel > summary::marker, #overview-panel > summary::-webkit-details-marker { display: none; }
+.overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-top: 10px; }
+.overview-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; }
+.overview-card.dead   { border-color: rgba(248,81,73,0.5); }
+.overview-card.enemy  { border-left: 3px solid rgba(248,81,73,0.4); }
+.overview-name { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-bottom: 3px; }
+.overview-conc { font-size: 10px; color: var(--purple); margin-top: 3px; }
+.overview-statuses { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
+.overview-status { font-size: 10px; padding: 1px 5px; border-radius: 8px; background: rgba(248,81,73,0.15); color: var(--red); }
+
+/* ── HP Popup ── */
+#hp-popup {
+  position: fixed; z-index: 200; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; box-shadow: var(--shadow); min-width: 210px;
+}
+#hp-popup-name { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--gold); }
+.hp-quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+.hp-quick-grid button { font-size: 13px; padding: 8px 4px; }
 
 /* ── LOG PAGE ── */
 .log-round { margin-bottom: 20px; }
@@ -179,13 +236,37 @@ label:first-child { margin-top: 0; }
 <!-- Nav -->
 <div id="nav">
   <div class="nav-title">⚔️ D&D 戰鬥紀錄</div>
-  <button class="btn-secondary btn-sm" id="nav-back" style="display:none" onclick="goHome()">← 首頁</button>
-  <button class="btn-secondary btn-sm" id="nav-share" style="display:none" onclick="showShareModal()">🔗 分享</button>
-  <button class="btn-secondary btn-sm" id="nav-log" style="display:none" onclick="showPage('log')">📜 紀錄</button>
+  <button class="btn-secondary btn-sm" id="nav-back"   style="display:none" onclick="goHome()">← 首頁</button>
+  <button class="btn-secondary btn-sm" id="nav-share"  style="display:none" onclick="showShareModal()">🔗 分享</button>
+  <button class="btn-secondary btn-sm" id="nav-log"    style="display:none" onclick="showPage('log')">📜 紀錄</button>
   <button class="btn-secondary btn-sm" id="nav-combat" style="display:none" onclick="showPage('combat')">⚔️ 戰鬥</button>
 </div>
 
 <div id="toast"></div>
+
+<!-- HP Popup -->
+<div id="hp-popup" style="display:none">
+  <div id="hp-popup-name"></div>
+  <div class="row" style="gap:6px">
+    <div class="col">
+      <label style="margin-top:0">HP 變化（負數=扣血）</label>
+      <input id="hp-popup-val" type="number" placeholder="0" style="text-align:center"
+             onkeydown="if(event.key==='Enter')applyHpCustom()">
+    </div>
+  </div>
+  <div class="hp-quick-grid">
+    <button class="btn-danger"    onclick="applyHpDelta(-10)">−10</button>
+    <button class="btn-danger"    onclick="applyHpDelta(-5)">−5</button>
+    <button class="btn-danger"    onclick="applyHpDelta(-1)">−1</button>
+    <button class="btn-secondary" onclick="applyHpDelta(1)">+1</button>
+    <button class="btn-secondary" onclick="applyHpDelta(5)">+5</button>
+    <button class="btn-secondary" onclick="applyHpDelta(10)">+10</button>
+  </div>
+  <div class="row" style="gap:6px;margin-top:8px">
+    <button class="btn-secondary btn-sm col" onclick="closeHpPopup()">取消</button>
+    <button class="btn-primary   btn-sm col" onclick="applyHpCustom()">套用</button>
+  </div>
+</div>
 
 <!-- QR Modal -->
 <div class="modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
@@ -224,6 +305,13 @@ label:first-child { margin-top: 0; }
 
 <!-- ══════════════════════════════════════════ COMBAT PAGE ══ -->
 <div id="page-combat" class="page">
+
+  <!-- Overview Panel -->
+  <details id="overview-panel">
+    <summary>📊 戰況總覽　<span style="font-size:11px;color:var(--text-dim)">(點擊展開)</span></summary>
+    <div class="overview-grid" id="overview-grid"></div>
+  </details>
+
   <!-- Round nav -->
   <div class="round-nav">
     <button class="btn-secondary" onclick="changeRound(-1)" id="prev-round">◀</button>
@@ -238,7 +326,7 @@ label:first-child { margin-top: 0; }
   <div class="card" id="entry-form">
     <!-- Portrait header -->
     <div class="entry-header">
-      <img id="entry-portrait" src="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);display:none">
+      <img id="entry-portrait" src="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);display:none;flex-shrink:0">
       <div id="entry-emoji-fallback" style="width:72px;height:72px;border-radius:50%;background:var(--bg3);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0"></div>
       <div style="flex:1;min-width:0">
         <div class="entry-name" id="entry-char-name">—</div>
@@ -249,6 +337,7 @@ label:first-child { margin-top: 0; }
 
     <hr class="divider">
 
+    <!-- HP -->
     <div class="row">
       <div class="col">
         <label>❤️ 回合起始 HP</label>
@@ -261,8 +350,22 @@ label:first-child { margin-top: 0; }
     </div>
     <div class="hp-calc">結算 HP：<span class="hp-result" id="hp-result">0</span></div>
 
+    <!-- Death Saves (shown only when HP=0) -->
+    <div id="death-saves-section" class="death-saves-box" style="display:none">
+      <div class="death-saves-title">💀 死亡豁免</div>
+      <div class="ds-row">
+        <div class="ds-label" style="color:var(--green)">成功</div>
+        <div id="ds-success" style="display:flex;gap:6px"></div>
+      </div>
+      <div class="ds-row">
+        <div class="ds-label" style="color:var(--red)">失敗</div>
+        <div id="ds-fail" style="display:flex;gap:6px"></div>
+      </div>
+    </div>
+
     <hr class="divider">
 
+    <!-- Main Action -->
     <label>🗡️ 主要動作</label>
     <div class="action-row">
       <select id="f-main-pick" onchange="appendAction('f-main','f-main-pick')">
@@ -274,6 +377,7 @@ label:first-child { margin-top: 0; }
     </div>
     <textarea id="f-main" rows="2" placeholder="攻擊目標 / 施展法術 / 道具使用 / 其他…" style="margin-top:6px"></textarea>
 
+    <!-- Bonus + Reaction -->
     <div class="row">
       <div class="col">
         <label>⚡ 附贈動作</label>
@@ -297,6 +401,7 @@ label:first-child { margin-top: 0; }
       </div>
     </div>
 
+    <!-- Skills -->
     <label>✨ 技能 / 專長</label>
     <div class="action-row">
       <select id="f-skills-pick" onchange="appendAction('f-skills','f-skills-pick')">
@@ -325,12 +430,14 @@ label:first-child { margin-top: 0; }
   <details class="manage-panel" style="margin-top: 60px">
     <summary>⚙️ 戰鬥管理</summary>
     <div style="margin-top:12px">
-      <div class="section-title" style="font-size:15px">快速更新角色 HP</div>
+
+      <!-- Select character -->
+      <label>選擇角色</label>
+      <select id="manage-char" onchange="onManageCharChange()"></select>
+
+      <!-- HP update -->
+      <div class="section-title" style="font-size:15px;margin-top:14px">❤️ 更新 HP</div>
       <div class="row" style="margin-bottom:8px">
-        <div class="col">
-          <label>角色</label>
-          <select id="manage-char"></select>
-        </div>
         <div class="col">
           <label>目前 HP</label>
           <input id="manage-hp" type="number">
@@ -338,9 +445,20 @@ label:first-child { margin-top: 0; }
       </div>
       <button class="btn-secondary btn-full" onclick="updateCharHp()">更新 HP</button>
 
+      <!-- Initiative -->
+      <div class="section-title" style="font-size:15px;margin-top:14px">🎲 先攻值</div>
+      <div class="row" style="margin-bottom:8px">
+        <div class="col">
+          <label>先攻（數字越大越先）</label>
+          <input id="manage-initiative" type="number" placeholder="0">
+        </div>
+      </div>
+      <button class="btn-secondary btn-full" onclick="setInitiative()">設定先攻</button>
+
       <hr class="divider" style="margin:14px 0">
 
-      <div class="section-title" style="font-size:15px">新增敵人</div>
+      <!-- Add enemy -->
+      <div class="section-title" style="font-size:15px">👹 新增敵人</div>
       <div class="row" style="margin-bottom:8px">
         <div class="col">
           <label>名字</label>
@@ -349,6 +467,12 @@ label:first-child { margin-top: 0; }
         <div class="col">
           <label>最大 HP</label>
           <input id="new-enemy-hp" type="number" value="100">
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:8px">
+        <div class="col">
+          <label>先攻值</label>
+          <input id="new-enemy-initiative" type="number" placeholder="0" value="0">
         </div>
       </div>
       <button class="btn-secondary btn-full" onclick="addEnemy()">➕ 新增敵人</button>
@@ -365,7 +489,7 @@ label:first-child { margin-top: 0; }
 </div>
 
 <script>
-// ── Constants ──────────────────────────────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────────────────────────
 const PRESET_PLAYERS = {{ preset_players|safe }};
 
 const STATUSES = [
@@ -375,7 +499,7 @@ const STATUSES = [
   "大步奔行", "飛躍", "護盾", "月光步", "獵人印記",
 ];
 
-// ── State ──────────────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────────
 let state = {
   page: "home",
   battles: [],
@@ -385,7 +509,7 @@ let state = {
   selectedStatuses: [],
 };
 
-// ── Socket.IO ──────────────────────────────────────────────────────────────────
+// ── Socket.IO ─────────────────────────────────────────────────────────────────
 const socket = io();
 socket.on("battle_updated", async ({ id }) => {
   if (state.activeBattle && state.activeBattle.id === id) {
@@ -397,11 +521,12 @@ socket.on("battle_list_changed", () => {
   if (state.page === "home") fetchBattles();
 });
 
-// ── Nav & Pages ────────────────────────────────────────────────────────────────
+// ── Nav & Pages ───────────────────────────────────────────────────────────────
 function showPage(name) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(`page-${name}`).classList.add("active");
   state.page = name;
+  closeHpPopup();
 
   const navBack   = document.getElementById("nav-back");
   const navShare  = document.getElementById("nav-share");
@@ -413,16 +538,15 @@ function showPage(name) {
   navLog.style.display    = name === "combat" ? "" : "none";
   navCombat.style.display = name === "log" ? "" : "none";
 
-  // Update URL hash so this battle is bookmarkable/shareable
   if (state.activeBattle && name !== "home") {
     window.location.hash = state.activeBattle.id;
   } else if (name === "home") {
     history.replaceState(null, "", window.location.pathname);
   }
 
-  if (name === "home") fetchBattles();
+  if (name === "home")   fetchBattles();
   if (name === "combat") renderCombat();
-  if (name === "log") renderLog();
+  if (name === "log")    renderLog();
 }
 
 function goHome() {
@@ -430,7 +554,7 @@ function goHome() {
   showPage("home");
 }
 
-// ── Share / QR ─────────────────────────────────────────────────────────────────
+// ── Share / QR ────────────────────────────────────────────────────────────────
 function getShareUrl() {
   if (!state.activeBattle) return "";
   return `${location.origin}${location.pathname}#${state.activeBattle.id}`;
@@ -439,7 +563,6 @@ function getShareUrl() {
 function showShareModal() {
   const url = getShareUrl();
   document.getElementById("share-url").textContent = url;
-  // Generate QR
   const qrEl = document.getElementById("qr-canvas");
   qrEl.innerHTML = "";
   new QRCode(qrEl, { text: url, width: 200, height: 200,
@@ -458,7 +581,7 @@ function copyShareUrl() {
   });
 }
 
-// ── Toast ──────────────────────────────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer;
 function toast(msg) {
   const el = document.getElementById("toast");
@@ -522,7 +645,7 @@ function renderPresetList() {
 }
 
 function togglePreset(i, el) {
-  if (el.querySelector('input').checked) el.classList.add("checked");
+  if (el.querySelector("input").checked) el.classList.add("checked");
   else el.classList.remove("checked");
 }
 
@@ -532,7 +655,6 @@ async function createBattle() {
 
   const characters = [];
 
-  // Selected presets
   document.querySelectorAll("#preset-list .preset-item input:checked").forEach((cb, i) => {
     const p = PRESET_PLAYERS[i];
     characters.push({
@@ -542,15 +664,16 @@ async function createBattle() {
       maxHP: p.maxHP, currentHP: p.maxHP,
       actions: p.actions || {},
       portrait: p.portrait || "",
+      initiative: 0,
+      deathSaves: { success: 0, fail: 0 },
     });
   });
 
-  // Enemies
   const enemyText = document.getElementById("enemy-input").value.trim();
   for (const line of enemyText.split("\n")) {
     const t = line.trim();
     if (!t) continue;
-    const parts = t.rsplit ? t.rsplit(" ", 1) : t.split(/\s+(?=\S+$)/);
+    const parts = t.split(/\s+(?=\S+$)/);
     let ename = t, emaxhp = 100;
     if (parts.length === 2 && !isNaN(parseInt(parts[1]))) {
       ename = parts[0].trim();
@@ -561,6 +684,8 @@ async function createBattle() {
       name: ename, player: "DM", cls: "敵人",
       type: "enemy", emoji: "👹",
       maxHP: emaxhp, currentHP: emaxhp,
+      initiative: 0,
+      deathSaves: { success: 0, fail: 0 },
     });
   }
 
@@ -578,7 +703,6 @@ async function createBattle() {
 
 async function openBattle(id) {
   await loadBattle(id);
-  // Go to last round with entries
   const lastRound = state.activeBattle.rounds
     .filter(r => Object.keys(r.entries).length > 0)
     .sort((a, b) => b.number - a.number)[0];
@@ -598,7 +722,7 @@ async function deleteBattle(id, btn) {
   fetchBattles();
 }
 
-// ── Battle loading ─────────────────────────────────────────────────────────────
+// ── Battle loading ────────────────────────────────────────────────────────────
 async function loadBattle(id) {
   const res = await fetch(`/api/battles/${id}`);
   state.activeBattle = await res.json();
@@ -629,31 +753,65 @@ function renderCombat() {
   renderCharTabs();
   renderEntryForm();
   renderManagePanel();
+  renderOverview();
 
   document.getElementById("prev-round").disabled = state.currentRound <= 1;
   document.getElementById("round-display").textContent = `回合 ${state.currentRound}`;
 }
 
+// Sort chars by initiative desc, players before enemies within same initiative
+function sortedChars(battle) {
+  const players = battle.characters.filter(c => c.type === "player");
+  const enemies  = battle.characters.filter(c => c.type === "enemy");
+  const byInit = arr => [...arr].sort((a, b) => (b.initiative || 0) - (a.initiative || 0));
+  return [...byInit(players), ...byInit(enemies)];
+}
+
 function renderCharTabs() {
   const battle = state.activeBattle;
   const tabs = document.getElementById("char-tabs");
-  const players = battle.characters.filter(c => c.type === "player");
-  const enemies = battle.characters.filter(c => c.type === "enemy");
-  const all = [...players, ...enemies];
+  const all = sortedChars(battle);
+
+  const roundData = battle.rounds.find(r => r.number === state.currentRound);
 
   tabs.innerHTML = all.map((c) => {
     const globalIdx = battle.characters.indexOf(c);
-    const isActive = globalIdx === state.activeCharIdx;
-    const color = hpColor(c.currentHP, c.maxHP);
+    const isActive  = globalIdx === state.activeCharIdx;
+    const color     = hpColor(c.currentHP, c.maxHP);
+    const isDead    = c.currentHP <= 0;
+
+    const entry     = roundData?.entries?.[c.id] || {};
+    const mainUsed  = !!entry.mainAction;
+    const bonusUsed = !!entry.bonusAction;
+    const reactUsed = !!entry.reaction;
+    const hasConc   = !!entry.concentration;
+
     const avatarHtml = c.portrait
-      ? `<img class="tab-avatar" src="/static/portraits/${encodeURIComponent(c.portrait)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">\
+      ? `<img class="tab-avatar" src="/static/portraits/${encodeURIComponent(c.portrait)}"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
          <div class="tab-avatar-emoji" style="display:none">${c.emoji}</div>`
       : `<div class="tab-avatar-emoji">${c.emoji}</div>`;
+
+    const initBadge = c.initiative
+      ? `<div class="tab-initiative">先攻 ${c.initiative}</div>` : "";
+
     return `
-      <div class="char-tab ${isActive ? "active" : ""}" onclick="selectChar(${globalIdx})">
+      <div class="char-tab ${isActive ? "active" : ""} ${isDead ? "dead" : ""}"
+           onclick="selectChar(${globalIdx})">
         ${avatarHtml}
         <div class="tab-name">${c.name}</div>
-        <div class="tab-hp" style="color:${color}">${c.currentHP}/${c.maxHP}</div>
+        <div class="tab-hp" style="color:${color}"
+             onclick="showHpPopup(${globalIdx}, event)">${c.currentHP}/${c.maxHP}</div>
+        <div class="tab-badges">
+          ${hasConc ? '<span class="tab-badge">🔮</span>' : ""}
+          ${isDead  ? '<span class="tab-badge">💀</span>' : ""}
+        </div>
+        <div class="action-dots">
+          <div class="action-dot main  ${mainUsed  ? "used" : ""}"></div>
+          <div class="action-dot bonus ${bonusUsed ? "used" : ""}"></div>
+          <div class="action-dot react ${reactUsed ? "used" : ""}"></div>
+        </div>
+        ${initBadge}
       </div>
     `;
   }).join("");
@@ -662,17 +820,19 @@ function renderCharTabs() {
 function selectChar(idx) {
   state.activeCharIdx = idx;
   state.selectedStatuses = [];
+  closeHpPopup();
   renderEntryForm();
   renderCharTabs();
 }
 
 function getCurrentEntry() {
   const battle = state.activeBattle;
-  const char = battle.characters[state.activeCharIdx];
-  const round = battle.rounds.find(r => r.number === state.currentRound);
+  const char   = battle.characters[state.activeCharIdx];
+  const round  = battle.rounds.find(r => r.number === state.currentRound);
   return round?.entries?.[char.id] || {};
 }
 
+// ── Action Dropdowns ──────────────────────────────────────────────────────────
 function populateActionDropdown(selectId, options) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
@@ -684,27 +844,9 @@ function populateActionDropdown(selectId, options) {
   });
 }
 
-function appendAction(textareaId, selectId) {
-  const sel = document.getElementById(selectId);
-  const ta  = document.getElementById(textareaId);
-  if (!sel || !ta || !sel.value) return;
-  const cur = ta.value.trim();
-  ta.value = cur ? cur + "、" + sel.value : sel.value;
-  sel.value = "";
-}
-
-function appendTarget(fieldId, selectId) {
-  const sel = document.getElementById(selectId);
-  const ta  = document.getElementById(fieldId);
-  if (!sel || !ta || !sel.value) return;
-  const cur = ta.value.trim();
-  ta.value = cur ? cur + " → " + sel.value : "→ " + sel.value;
-  sel.value = "";
-}
-
 function populateTargetDropdowns() {
-  const battle = state.activeBattle;
-  const char = battle.characters[state.activeCharIdx];
+  const battle  = state.activeBattle;
+  const char    = battle.characters[state.activeCharIdx];
   const targets = battle.characters.filter(c => c.id !== char.id);
   const players = targets.filter(c => c.type === "player");
   const enemies  = targets.filter(c => c.type === "enemy");
@@ -736,10 +878,29 @@ function populateTargetDropdowns() {
   });
 }
 
+function appendAction(textareaId, selectId) {
+  const sel = document.getElementById(selectId);
+  const ta  = document.getElementById(textareaId);
+  if (!sel || !ta || !sel.value) return;
+  const cur = ta.value.trim();
+  ta.value = cur ? cur + "、" + sel.value : sel.value;
+  sel.value = "";
+}
+
+function appendTarget(fieldId, selectId) {
+  const sel = document.getElementById(selectId);
+  const ta  = document.getElementById(fieldId);
+  if (!sel || !ta || !sel.value) return;
+  const cur = ta.value.trim();
+  ta.value = cur ? cur + " → " + sel.value : "→ " + sel.value;
+  sel.value = "";
+}
+
+// ── Entry Form ────────────────────────────────────────────────────────────────
 function renderEntryForm() {
   const battle = state.activeBattle;
-  const char = battle.characters[state.activeCharIdx];
-  const entry = getCurrentEntry();
+  const char   = battle.characters[state.activeCharIdx];
+  const entry  = getCurrentEntry();
 
   // Portrait
   const portrait = document.getElementById("entry-portrait");
@@ -759,27 +920,42 @@ function renderEntryForm() {
     char.type === "player" ? `${char.player} · ${char.cls}` : char.cls;
 
   const hpPct = Math.max(0, Math.min(100, (char.currentHP / char.maxHP) * 100));
-  document.getElementById("hp-bar").style.width = hpPct + "%";
+  document.getElementById("hp-bar").style.width      = hpPct + "%";
   document.getElementById("hp-bar").style.background = hpColor(char.currentHP, char.maxHP);
 
-  // Populate action dropdowns from char's actions data
+  // Action dropdowns
   const acts = char.actions || {};
   populateActionDropdown("f-main-pick",     acts["主要動作"]);
   populateActionDropdown("f-bonus-pick",    acts["附贈動作"]);
   populateActionDropdown("f-reaction-pick", acts["反應"]);
   populateActionDropdown("f-skills-pick",   acts["技能/專長"]);
-
-  // Populate target dropdowns from battle characters
   populateTargetDropdowns();
 
-  document.getElementById("f-hp-start").value   = entry.hpAtStart ?? char.currentHP;
-  document.getElementById("f-hp-change").value  = entry.hpChange ?? 0;
-  document.getElementById("f-main").value        = entry.mainAction || "";
-  document.getElementById("f-bonus").value       = entry.bonusAction || "";
-  document.getElementById("f-reaction").value    = entry.reaction || "";
-  document.getElementById("f-skills").value      = entry.skills || "";
-  document.getElementById("f-concentration").value = entry.concentration || "";
-  document.getElementById("f-spell-slots").value = entry.spellSlotsRemaining || "";
+  // Fill values
+  document.getElementById("f-hp-start").value      = entry.hpAtStart ?? char.currentHP;
+  document.getElementById("f-hp-change").value      = entry.hpChange ?? 0;
+  document.getElementById("f-main").value            = entry.mainAction || "";
+  document.getElementById("f-bonus").value           = entry.bonusAction || "";
+  document.getElementById("f-reaction").value        = entry.reaction || "";
+  document.getElementById("f-skills").value          = entry.skills || "";
+  document.getElementById("f-concentration").value  = entry.concentration || "";
+  document.getElementById("f-spell-slots").value    = entry.spellSlotsRemaining || "";
+
+  // Death Saves
+  const dsSec = document.getElementById("death-saves-section");
+  if (char.currentHP <= 0) {
+    dsSec.style.display = "";
+    const ds = char.deathSaves || { success: 0, fail: 0 };
+    const makeBoxes = (type, count) =>
+      [0, 1, 2].map(i =>
+        `<div class="ds-check ${type} ${i < count ? "filled" : ""}"
+              onclick="toggleDeathSave('${char.id}','${type}',${i})"></div>`
+      ).join("");
+    document.getElementById("ds-success").innerHTML = makeBoxes("success", ds.success);
+    document.getElementById("ds-fail").innerHTML    = makeBoxes("fail",    ds.fail);
+  } else {
+    dsSec.style.display = "none";
+  }
 
   // Statuses
   state.selectedStatuses = [...(entry.statuses || [])];
@@ -788,7 +964,7 @@ function renderEntryForm() {
 }
 
 function updateHpCalc() {
-  const start  = parseInt(document.getElementById("f-hp-start").value) || 0;
+  const start  = parseInt(document.getElementById("f-hp-start").value)  || 0;
   const change = parseInt(document.getElementById("f-hp-change").value) || 0;
   const result = start + change;
   const el = document.getElementById("hp-result");
@@ -797,15 +973,12 @@ function updateHpCalc() {
 }
 
 function renderStatusPicker() {
-  // Tags
-  const tags = document.getElementById("selected-statuses");
-  tags.innerHTML = state.selectedStatuses.map(s =>
-    `<span class="status-tag" onclick="toggleStatus('${s}')">${s} ✕</span>`
-  ).join("");
+  document.getElementById("selected-statuses").innerHTML =
+    state.selectedStatuses.map(s =>
+      `<span class="status-tag" onclick="toggleStatus('${s}')">${s} ✕</span>`
+    ).join("");
 
-  // Picker
-  const picker = document.getElementById("status-picker");
-  picker.innerHTML = STATUSES.map(s => {
+  document.getElementById("status-picker").innerHTML = STATUSES.map(s => {
     const sel = state.selectedStatuses.includes(s);
     return `<span class="status-opt ${sel ? "selected" : ""}" onclick="toggleStatus('${s}')">${s}</span>`;
   }).join("");
@@ -821,25 +994,24 @@ function toggleStatus(status) {
 
 async function saveEntry() {
   const battle = state.activeBattle;
-  const char = battle.characters[state.activeCharIdx];
+  const char   = battle.characters[state.activeCharIdx];
 
-  const hpStart  = parseInt(document.getElementById("f-hp-start").value) || 0;
+  const hpStart  = parseInt(document.getElementById("f-hp-start").value)  || 0;
   const hpChange = parseInt(document.getElementById("f-hp-change").value) || 0;
 
   const entry = {
-    hpAtStart: hpStart,
-    hpChange:  hpChange,
-    mainAction:    document.getElementById("f-main").value.trim(),
-    bonusAction:   document.getElementById("f-bonus").value.trim(),
-    reaction:      document.getElementById("f-reaction").value.trim(),
-    skills:        document.getElementById("f-skills").value.trim(),
-    concentration: document.getElementById("f-concentration").value.trim(),
-    statuses:      [...state.selectedStatuses],
+    hpAtStart:   hpStart,
+    hpChange:    hpChange,
+    mainAction:  document.getElementById("f-main").value.trim(),
+    bonusAction: document.getElementById("f-bonus").value.trim(),
+    reaction:    document.getElementById("f-reaction").value.trim(),
+    skills:      document.getElementById("f-skills").value.trim(),
+    concentration:       document.getElementById("f-concentration").value.trim(),
+    statuses:            [...state.selectedStatuses],
     spellSlotsRemaining: document.getElementById("f-spell-slots").value.trim(),
     savedAt: new Date().toLocaleTimeString("zh-Hant"),
   };
 
-  // Ensure round exists
   let round = battle.rounds.find(r => r.number === state.currentRound);
   if (!round) {
     round = { number: state.currentRound, entries: {} };
@@ -847,26 +1019,46 @@ async function saveEntry() {
     battle.rounds.sort((a, b) => a.number - b.number);
   }
   round.entries[char.id] = entry;
-
-  // Update char current HP
   char.currentHP = hpStart + hpChange;
 
   await saveBattle();
   toast(`✅ ${char.name} 回合 ${state.currentRound} 已儲存`);
   renderCharTabs();
   renderEntryForm();
+  renderOverview();
 }
 
+// ── Round Navigation ──────────────────────────────────────────────────────────
 async function changeRound(delta) {
   const next = state.currentRound + delta;
   if (next < 1) return;
+
+  const battle    = state.activeBattle;
+  const prevRound = battle.rounds.find(r => r.number === state.currentRound);
+
   state.currentRound = next;
   state.selectedStatuses = [];
 
-  const battle = state.activeBattle;
   let round = battle.rounds.find(r => r.number === state.currentRound);
   if (!round) {
     round = { number: state.currentRound, entries: {} };
+
+    // ── Carry over from previous round ──
+    if (delta > 0 && prevRound) {
+      battle.characters.forEach(c => {
+        const prev = prevRound.entries?.[c.id];
+        if (prev) {
+          round.entries[c.id] = {
+            hpAtStart:           (prev.hpAtStart || 0) + (prev.hpChange || 0),
+            hpChange:            0,
+            concentration:       prev.concentration || "",
+            spellSlotsRemaining: prev.spellSlotsRemaining || "",
+            statuses:            [...(prev.statuses || [])],
+          };
+        }
+      });
+    }
+
     battle.rounds.push(round);
     battle.rounds.sort((a, b) => a.number - b.number);
     await saveBattle();
@@ -874,6 +1066,7 @@ async function changeRound(delta) {
   renderCombat();
 }
 
+// ── Manage Panel ──────────────────────────────────────────────────────────────
 function renderManagePanel() {
   const battle = state.activeBattle;
   const sel = document.getElementById("manage-char");
@@ -881,39 +1074,161 @@ function renderManagePanel() {
   sel.innerHTML = battle.characters.map((c, i) =>
     `<option value="${i}">${c.emoji} ${c.name} (HP: ${c.currentHP}/${c.maxHP})</option>`
   ).join("");
-  sel.onchange = () => {
-    const c = battle.characters[parseInt(sel.value)];
-    document.getElementById("manage-hp").value = c.currentHP;
-  };
-  document.getElementById("manage-hp").value = battle.characters[0]?.currentHP || 0;
+  onManageCharChange();
+}
+
+function onManageCharChange() {
+  const battle = state.activeBattle;
+  const idx = parseInt(document.getElementById("manage-char").value);
+  const c = battle.characters[idx];
+  if (!c) return;
+  document.getElementById("manage-hp").value          = c.currentHP;
+  document.getElementById("manage-initiative").value  = c.initiative || 0;
 }
 
 async function updateCharHp() {
   const battle = state.activeBattle;
   const idx = parseInt(document.getElementById("manage-char").value);
-  const hp = parseInt(document.getElementById("manage-hp").value);
+  const hp  = parseInt(document.getElementById("manage-hp").value);
   battle.characters[idx].currentHP = hp;
   await saveBattle();
   toast(`✅ ${battle.characters[idx].name} HP → ${hp}`);
   renderCombat();
 }
 
+async function setInitiative() {
+  const battle = state.activeBattle;
+  const idx = parseInt(document.getElementById("manage-char").value);
+  const val = parseInt(document.getElementById("manage-initiative").value) || 0;
+  battle.characters[idx].initiative = val;
+  await saveBattle();
+  toast(`🎲 ${battle.characters[idx].name} 先攻 → ${val}`);
+  renderCombat();
+}
+
 async function addEnemy() {
-  const name = document.getElementById("new-enemy-name").value.trim();
-  const maxHP = parseInt(document.getElementById("new-enemy-hp").value) || 100;
+  const name     = document.getElementById("new-enemy-name").value.trim();
+  const maxHP    = parseInt(document.getElementById("new-enemy-hp").value) || 100;
+  const initiative = parseInt(document.getElementById("new-enemy-initiative").value) || 0;
   if (!name) { toast("❌ 請輸入敵人名稱"); return; }
 
   state.activeBattle.characters.push({
     id: crypto.randomUUID(),
     name, player: "DM", cls: "敵人", type: "enemy",
     emoji: "👹", maxHP, currentHP: maxHP,
+    initiative,
+    deathSaves: { success: 0, fail: 0 },
   });
   await saveBattle();
-  document.getElementById("new-enemy-name").value = "";
-  document.getElementById("new-enemy-hp").value = 100;
+  document.getElementById("new-enemy-name").value        = "";
+  document.getElementById("new-enemy-hp").value          = 100;
+  document.getElementById("new-enemy-initiative").value  = 0;
   toast(`➕ 已新增 ${name}`);
   renderCombat();
-  renderManagePanel();
+}
+
+// ── HP Popup ──────────────────────────────────────────────────────────────────
+let hpPopupCharIdx = null;
+
+function showHpPopup(idx, event) {
+  event.stopPropagation();
+  hpPopupCharIdx = idx;
+  const char = state.activeBattle.characters[idx];
+  document.getElementById("hp-popup-name").textContent =
+    `${char.emoji} ${char.name}　${char.currentHP} / ${char.maxHP}`;
+  document.getElementById("hp-popup-val").value = "";
+
+  const popup = document.getElementById("hp-popup");
+  popup.style.display = "block";
+  const x = Math.max(8, Math.min(event.clientX - 105, window.innerWidth - 226));
+  const y = Math.max(8, Math.min(event.clientY + 8,  window.innerHeight - 170));
+  popup.style.left = x + "px";
+  popup.style.top  = y + "px";
+  setTimeout(() => document.getElementById("hp-popup-val").focus(), 60);
+}
+
+function closeHpPopup() {
+  const p = document.getElementById("hp-popup");
+  if (p) p.style.display = "none";
+  hpPopupCharIdx = null;
+}
+
+async function applyHpDelta(delta) {
+  if (hpPopupCharIdx === null) return;
+  const char = state.activeBattle.characters[hpPopupCharIdx];
+  char.currentHP = Math.max(0, Math.min(char.maxHP, char.currentHP + delta));
+  await saveBattle();
+  renderCharTabs();
+  renderOverview();
+  if (state.activeCharIdx === hpPopupCharIdx) renderEntryForm();
+  document.getElementById("hp-popup-name").textContent =
+    `${char.emoji} ${char.name}　${char.currentHP} / ${char.maxHP}`;
+}
+
+async function applyHpCustom() {
+  const val = parseInt(document.getElementById("hp-popup-val").value);
+  if (isNaN(val)) { closeHpPopup(); return; }
+  await applyHpDelta(val);
+  closeHpPopup();
+}
+
+// Close popup when tapping outside
+document.addEventListener("click", e => {
+  const popup = document.getElementById("hp-popup");
+  if (popup && popup.style.display !== "none" && !popup.contains(e.target)) {
+    closeHpPopup();
+  }
+});
+
+// ── Overview Panel ────────────────────────────────────────────────────────────
+function renderOverview() {
+  const battle = state.activeBattle;
+  if (!battle) return;
+  const grid = document.getElementById("overview-grid");
+  if (!grid) return;
+
+  const roundData = battle.rounds.find(r => r.number === state.currentRound);
+
+  grid.innerHTML = sortedChars(battle).map(c => {
+    const entry  = roundData?.entries?.[c.id] || {};
+    const color  = hpColor(c.currentHP, c.maxHP);
+    const hpPct  = Math.max(0, Math.min(100, (c.currentHP / c.maxHP) * 100));
+    const isDead = c.currentHP <= 0;
+    const statuses = (entry.statuses || []).map(s =>
+      `<span class="overview-status">${s}</span>`
+    ).join("");
+
+    return `
+      <div class="overview-card ${isDead ? "dead" : ""} ${c.type === "enemy" ? "enemy" : ""}">
+        <div class="overview-name">
+          <span>${c.emoji}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
+          ${c.initiative ? `<span style="font-size:10px;color:var(--gold)">${c.initiative}</span>` : ""}
+        </div>
+        <div style="font-size:12px;font-weight:700;color:${color}">${c.currentHP}/${c.maxHP}${isDead ? " 💀" : ""}</div>
+        <div class="hp-bar-wrap" style="height:4px;margin:4px 0">
+          <div class="hp-bar-fill" style="width:${hpPct}%;background:${color}"></div>
+        </div>
+        ${entry.concentration ? `<div class="overview-conc">🔮 ${entry.concentration}</div>` : ""}
+        ${statuses ? `<div class="overview-statuses">${statuses}</div>` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+// ── Death Saves ───────────────────────────────────────────────────────────────
+async function toggleDeathSave(charId, type, idx) {
+  const char = state.activeBattle.characters.find(c => c.id === charId);
+  if (!char) return;
+  if (!char.deathSaves) char.deathSaves = { success: 0, fail: 0 };
+  // Toggle: clicking filled box clears back to idx, clicking empty sets to idx+1
+  char.deathSaves[type] = char.deathSaves[type] === idx + 1 ? idx : idx + 1;
+
+  if (char.deathSaves.success >= 3) toast(`✨ ${char.name} 死亡豁免成功！穩定狀態`);
+  if (char.deathSaves.fail >= 3)    toast(`💀 ${char.name} 死亡豁免失敗，角色死亡`);
+
+  await saveBattle();
+  renderEntryForm();
 }
 
 // ── LOG ───────────────────────────────────────────────────────────────────────
@@ -939,7 +1254,7 @@ function renderLog() {
     ["主要動作", "mainAction"],
     ["附贈動作", "bonusAction"],
     ["反應",     "reaction"],
-    ["技能/專長","skills"],
+    ["技能/專長", "skills"],
     ["專注法術", "concentration"],
     ["狀態",     "statuses"],
     ["起始HP",   "hpAtStart"],
@@ -948,39 +1263,31 @@ function renderLog() {
   ];
 
   content.innerHTML = activeRounds.map(rnd => {
-    const chars = Object.keys(rnd.entries)
-      .map(id => charMap[id])
-      .filter(Boolean);
+    const chars = Object.keys(rnd.entries).map(id => charMap[id]).filter(Boolean);
 
     const rows = FIELDS.map(([label, key]) => {
+      const hasData = chars.some(c => {
+        const v = rnd.entries[c.id]?.[key];
+        if (key === "statuses")  return Array.isArray(v) && v.length > 0;
+        if (key === "hpChange")  return v !== 0 && v !== "" && v !== undefined;
+        return v !== "" && v !== undefined && v !== null;
+      });
+      if (!hasData && key !== "hpAtStart") return "";
+
       const cells = chars.map(c => {
         const entry = rnd.entries[c.id] || {};
         let val = entry[key] ?? "";
         if (key === "statuses") val = Array.isArray(val) ? val.join(", ") : "";
         if (key === "hpChange" && val === 0) val = "";
         let cls = "";
-        if (key === "hpChange") {
-          if (val < 0) cls = "hp-neg";
-          if (val > 0) cls = "hp-pos";
-        }
+        if (key === "hpChange") { if (val < 0) cls = "hp-neg"; if (val > 0) cls = "hp-pos"; }
         return `<td class="${cls}">${val}</td>`;
       }).join("");
-
-      // Only show rows with data
-      const hasData = chars.some(c => {
-        const v = rnd.entries[c.id]?.[key];
-        if (key === "statuses") return Array.isArray(v) && v.length > 0;
-        if (key === "hpChange") return v !== 0 && v !== "" && v !== undefined;
-        return v !== "" && v !== undefined && v !== null;
-      });
-      if (!hasData && key !== "hpAtStart") return "";
 
       return `<tr><th>${label}</th>${cells}</tr>`;
     }).filter(Boolean).join("");
 
-    const headers = chars.map(c =>
-      `<th>${c.emoji} ${c.name}</th>`
-    ).join("");
+    const headers = chars.map(c => `<th>${c.emoji} ${c.name}</th>`).join("");
 
     return `
       <div class="log-round">
@@ -1000,8 +1307,8 @@ function exportJSON() {
   if (!state.activeBattle) return;
   const data = JSON.stringify(state.activeBattle, null, 2);
   const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
   a.href = url;
   a.download = `${state.activeBattle.name}_${state.activeBattle.date}.json`;
   a.click();
@@ -1011,14 +1318,12 @@ function exportJSON() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderPresetList();
 
-// Auto-join battle from URL hash (e.g. http://host:5001/#<battle_id>)
 (async () => {
   const hash = window.location.hash.slice(1);
   if (hash) {
     try {
       await loadBattle(hash);
       if (state.activeBattle) {
-        // Jump to last active round
         const filled = state.activeBattle.rounds
           .filter(r => Object.keys(r.entries).length > 0)
           .sort((a, b) => b.number - a.number);
@@ -1026,7 +1331,7 @@ renderPresetList();
         showPage("combat");
         return;
       }
-    } catch (e) { /* invalid hash, fall through */ }
+    } catch (e) { /* invalid hash */ }
   }
   fetchBattles();
 })();
